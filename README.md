@@ -1,9 +1,9 @@
-# tr--pipe-tts
+# Turkish TTS with Piper TTS
 
-A multilingual Text-to-Speech (TTS) service for **Turkish (tr-TR)** and **Azerbaijani (az-AZ)** using [Piper TTS](https://github.com/rhasspy/piper).
+A multilingual Text-to-Speech (TTS) service for **Turkish (tr-TR)** using [Piper TTS](https://github.com/rhasspy/piper).
 
 ## Features
-- Turkish and Azerbaijani number, date, time, currency formatting
+- Turkish number, date, time, currency formatting
 - High-quality ONNX-based neural TTS
 - REST API for speech synthesis
 - Web frontend included
@@ -14,5 +14,5 @@ A multilingual Text-to-Speech (TTS) service for **Turkish (tr-TR)** and **Azerba
 ## Usage
 
 ```bash
-docker build -t pipe-tts .
-docker run -p 5000:5000 pipe-tts
+docker build -t turkish-tts .
+docker run -p 5000:5000 --name turkish-tts turkish-tts
