@@ -7,17 +7,57 @@ logger = logging.getLogger(__name__)
 
 
 def turkish_number_to_words(text):
-    """Convert numbers to Turkish words with advanced formatting."""
-    text = text.replace(".", ",")
+    """Convert numbers to Turkish words with proper grammar rules"""
+    text = text.replace(".", ",")  # Standardize to Turkish decimal format
 
-    def convert_number(match):
+    # First handle fractions (a/b)
+    def convert_fraction(match):
         num_str = match.group()
+        try:
+            if "/" in num_str:
+                parts = num_str.split("/")
+                if len(parts) == 2:
+                    numerator = float(parts[0])
+                    denominator = float(parts[1])
 
+                    # Special cases
+                    if numerator == 1 and denominator == 2:
+                        return "yarım"
+                    if numerator == 1 and denominator == 4:
+                        return "çeyrek"
+
+                    # Convert to decimal value to determine proper speech form
+                    decimal_value = numerator / denominator
+
+                    # If it's a simple half (x.5), use "buçuk" form
+                    if decimal_value % 1 == 0.5 and decimal_value >= 1:
+                        whole_part = int(decimal_value)
+                        return f"{num2words.num2words(whole_part, lang='tr')} buçuk"
+
+                    # Otherwise use fraction format
+                    return f"{num2words.num2words(numerator, lang='tr')} bölü {num2words.num2words(denominator, lang='tr')}"
+        except:
+            pass
+        return num_str
+
+    # Handle fractions first
+    text = re.sub(r"\d+\s*/\s*\d+", convert_fraction, text)
+
+    # Then handle decimals and other numbers
+    def convert_number(match):
+        num_str = match.group().strip()
+
+        # Skip if this was already handled as a fraction
+        if "/" in num_str:
+            return num_str
+
+        # Handle currency
         if re.match(r"^[₺$€£]\s*\d", num_str) or re.match(r"\d\s*[₺$€£]", num_str):
             return handle_currency(num_str)
 
+        # Handle percentage
         if num_str.endswith("%"):
-            base_num = num_str[:-1]
+            base_num = num_str[:-1].strip()
             try:
                 float_val = float(base_num.replace(",", "."))
                 words = num2words.num2words(float_val, lang="tr")
@@ -25,98 +65,57 @@ def turkish_number_to_words(text):
             except:
                 return num_str
 
-        if "/" in num_str:
-            try:
-                numerator, denominator = map(int, num_str.split("/"))
-                if denominator == 2:
-                    if numerator == 1:
-                        return "yarım"
-                    return f"{num2words.num2words(numerator, lang='tr')} buçuk"
-                return f"{num2words.num2words(numerator, lang='tr')} bölü {num2words.num2words(denominator, lang='tr')}"
-            except:
+        try:
+            # Handle dates (keep as-is for date_to_turkish to process later)
+            if re.match(r"\d{4}-\d{2}-\d{2}", num_str):
                 return num_str
 
-        try:
-            if re.match(r"\d{4}-\d{2}-\d{2}", num_str):
-                return date_to_turkish(num_str)
+            # Handle time (keep as-is for time_to_turkish to process later)
             if re.match(r"\d{1,2}:\d{2}", num_str):
-                return time_to_turkish(num_str)
+                return num_str
 
-            if "," in num_str:
-                whole, decimal = num_str.split(",")
+            # Process decimal numbers
+            if "," in num_str or "." in num_str:
+                num_value = float(num_str.replace(",", "."))
+
+                # Special case: 0.5 with following noun becomes "yarım"
+                if num_value == 0.5:
+                    # Check if followed by a noun (simplified check)
+                    next_chars = text[
+                        text.find(num_str)
+                        + len(num_str) : text.find(num_str)
+                        + len(num_str)
+                        + 10
+                    ]
+                    if re.search(r"^\s*[a-zA-Z]", next_chars):
+                        return "yarım"
+                    return "sıfır virgül beş"
+
+                # X.5 becomes "X buçuk" in speech
+                if num_value % 1 == 0.5 and num_value >= 1:
+                    whole = int(num_value)
+                    return f"{num2words.num2words(whole, lang='tr')} buçuk"
+
+                # Standard decimal format
+                whole, decimal = str(num_value).split(".")
                 whole_words = num2words.num2words(int(whole), lang="tr")
                 decimal_words = num2words.num2words(int(decimal), lang="tr")
                 return f"{whole_words} virgül {decimal_words}"
-            else:
-                num = int(num_str)
-                if 1800 <= num <= 2100:
-                    return f"{num2words.num2words(num, lang='tr')} yılı"
-                return num2words.num2words(num, lang="tr")
+
+            # Regular integers
+            num = int(num_str)
+
+            # Special handling for years
+            if 1800 <= num <= 2100:
+                return f"{num2words.num2words(num, lang='tr')} yılı"
+
+            return num2words.num2words(num, lang="tr")
+
         except Exception as e:
-            logger.debug(f"Number conversion failed: {e}")
+            logger.debug(f"Number conversion failed for '{num_str}': {str(e)}")
             return num_str
 
     return re.sub(r"([₺$€£]?\s*)?\d+([,.]\d+)?(%?)", convert_number, text)
-
-
-def azerbaijani_number_to_words(text):
-    """Convert numbers to Azerbaijani style using Turkish base."""
-    text = text.replace(".", ",")
-
-    def convert_number(match):
-        num_str = match.group()
-
-        if re.match(r"^[₼$€£]\s*\d", num_str) or re.match(r"\d\s*[₼$€£]", num_str):
-            return handle_currency(num_str, azerbaijani=True)
-
-        if num_str.endswith("%"):
-            base_num = num_str[:-1]
-            try:
-                float_val = float(base_num.replace(",", "."))
-                words = num2words.num2words(float_val, lang="tr")
-                words = turkish_to_azerbaijani_numbers(words)
-                return f"{words} faiz"
-            except:
-                return num_str
-
-        if "/" in num_str:
-            try:
-                numerator, denominator = map(int, num_str.split("/"))
-                if denominator == 2:
-                    if numerator == 1:
-                        return "yarım"
-                    return f"{num2words.num2words(numerator, lang='tr')} buçuk"
-                num_words = f"{num2words.num2words(numerator, lang='tr')} bölü {num2words.num2words(denominator, lang='tr')}"
-                return turkish_to_azerbaijani_numbers(num_words)
-            except:
-                return num_str
-
-        try:
-            if re.match(r"\d{4}-\d{2}-\d{2}", num_str):
-                return date_to_azerbaijani(num_str)
-            if re.match(r"\d{1,2}:\d{2}", num_str):
-                return time_to_azerbaijani(num_str)
-
-            if "," in num_str:
-                whole, decimal = num_str.split(",")
-                whole_words = num2words.num2words(int(whole), lang="tr")
-                decimal_words = num2words.num2words(int(decimal), lang="tr")
-                whole_words = turkish_to_azerbaijani_numbers(whole_words)
-                decimal_words = turkish_to_azerbaijani_numbers(decimal_words)
-                return f"{whole_words} nöqtə {decimal_words}"
-            else:
-                num = int(num_str)
-                if 1800 <= num <= 2100:
-                    words = num2words.num2words(num, lang="tr")
-                    words = turkish_to_azerbaijani_numbers(words)
-                    return f"{words} ili"
-                words = num2words.num2words(num, lang="tr")
-                return turkish_to_azerbaijani_numbers(words)
-        except Exception as e:
-            logger.debug(f"Azerbaijani number conversion failed: {e}")
-            return num_str
-
-    return re.sub(r"([₼$€£]?\s*)?\d+([,.]\d+)?(%?)", convert_number, text)
 
 
 def turkish_to_azerbaijani_numbers(text):
@@ -218,31 +217,6 @@ def date_to_turkish(date_str):
         return date_str
 
 
-def date_to_azerbaijani(date_str):
-    try:
-        year, month, day = map(int, date_str.split("-"))
-        months = {
-            1: "yanvar",
-            2: "fevral",
-            3: "mart",
-            4: "aprel",
-            5: "may",
-            6: "iyun",
-            7: "iyul",
-            8: "avqust",
-            9: "sentyabr",
-            10: "oktyabr",
-            11: "noyabr",
-            12: "dekabr",
-        }
-        day_word = turkish_to_azerbaijani_numbers(num2words.num2words(day, lang="tr"))
-        month_word = months[month]
-        year_word = turkish_to_azerbaijani_numbers(num2words.num2words(year, lang="tr"))
-        return f"{day_word} {month_word} {year_word} ili"
-    except:
-        return date_str
-
-
 def time_to_turkish(time_str):
     try:
         hours, minutes = map(int, time_str.split(":"))
@@ -257,28 +231,5 @@ def time_to_turkish(time_str):
             next_h = (hours + 1) % 24
             mins_left = 60 - minutes
             return f"{h_word(mins_left)} var {h_word(next_h)}"
-    except:
-        return time_str
-
-
-def time_to_azerbaijani(time_str):
-    try:
-        hours, minutes = map(int, time_str.split(":"))
-        h_word = lambda x: turkish_to_azerbaijani_numbers(
-            num2words.num2words(x, lang="tr")
-        )
-        m_word = lambda x: turkish_to_azerbaijani_numbers(
-            num2words.num2words(x, lang="tr")
-        )
-        if minutes == 0:
-            return f"{h_word(hours)} tam"
-        elif minutes == 30:
-            return f"{h_word(hours)} yarım"
-        elif minutes < 30:
-            return f"{h_word(hours)} {m_word(minutes)} keçib"
-        else:
-            next_h = (hours + 1) % 24
-            mins_left = 60 - minutes
-            return f"{m_word(mins_left)} qalmış {h_word(next_h)}"
     except:
         return time_str

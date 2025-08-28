@@ -4,7 +4,7 @@ import logging
 import os
 
 from tts_engine import TTSEngine
-from num2words_tr import turkish_number_to_words, azerbaijani_number_to_words
+from num2words_tr import turkish_number_to_words
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
