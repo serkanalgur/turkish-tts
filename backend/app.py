@@ -40,9 +40,6 @@ def generate_speech():
     if language == "tr-TR":
         normalized_text = turkish_number_to_words(text)
         logger.info(f"[TR] Normalized: '{text}' → '{normalized_text}'")
-    elif language == "az-AZ":
-        normalized_text = azerbaijani_number_to_words(text)
-        logger.info(f"[AZ] Normalized: '{text}' → '{normalized_text}'")
     else:
         normalized_text = text
 
