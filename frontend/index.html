@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turkish TTS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Turkish Text-to-Speech</h1>
+
+
+    <div class="sample-section">
+        <div class="sample-category">Turkish Examples:</div>
+        <div class="sample-text"
+            onclick="setSampleText('tr-TR', 'Bugün 25.5 derece sıcaklık var ve 123.456 TL param var.')">
+            📝 Numbers, decimals & currency
+        </div>
+        <div class="sample-text"
+            onclick="setSampleText('tr-TR', 'Ücret %15.5 artacak ve 2023-08-27 tarihinde geçerli olacak.')">
+            📝 Percentage & date
+        </div>
+        <div class="sample-text" onclick="setSampleText('tr-TR', 'Toplantı 14:30\'da başlayacak ve 2.5 saat sürecek.')">
+            📝 Time & duration
+        </div>
+        <div class="sample-text"
+            onclick="setSampleText('tr-TR', '1/2 dilim pizza ve 3,14 sayısı hakkında konuşacağız.')">
+            📝 Fractions & special numbers
+        </div>
+    </div>
+
+    <textarea id="textInput"
+        placeholder="Enter text here (supports numbers like 123, 45.6, $100, 2023-08-27, etc.)">Merhaba, bu bir test mesajıdır. Bugün 25,5 derece sıcaklık var ve 123,456 TL param var.</textarea>
+    <select id="languageSelect">
+        <option value="tr-TR">Turkish (tr-TR)</option>
+    </select>
+    <button onclick="generateAudio()">Generate Speech</button>
+    <div id="status" class="info">TTS service is ready - click a sample text above to try number handling</div>
+    <audio id="audioPlayer" controls style="width: 100%"></audio>
+    <script src="script.js"></script>
+</body>
+
+</html>
