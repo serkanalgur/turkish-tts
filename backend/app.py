@@ -70,5 +70,5 @@ def health():
 
 
 if __name__ == "__main__":
-    logger.info("Starting TTS server on 0.0.0.0:5000")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    logger.info("Starting TTS server on 0.0.0.0:5002")
+    app.run(host="0.0.0.0", port=5002, debug=True)
