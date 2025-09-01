@@ -15,4 +15,4 @@ A multilingual Text-to-Speech (TTS) service for **Turkish (tr-TR)** using [Piper
 
 ```bash
 docker build -t turkish-tts .
-docker run -p 5000:5000 --name turkish-tts turkish-tts
+docker run -p 5002:5002 --name turkish-tts turkish-tts
