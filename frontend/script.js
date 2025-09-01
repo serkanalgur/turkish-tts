@@ -7,6 +7,7 @@ function setSampleText(lang, text) {
 async function generateAudio() {
     const text = document.getElementById('textInput').value.trim();
     const language = document.getElementById('languageSelect').value;
+    const speaker = document.getElementById('speakerSelect').value;
     const status = document.getElementById('status');
     const audioPlayer = document.getElementById('audioPlayer');
 
@@ -26,7 +27,7 @@ async function generateAudio() {
         const response = await fetch('/generate-speech', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, language })
+            body: JSON.stringify({ text, language, speaker })
         });
 
         if (!response.ok) {

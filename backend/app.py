@@ -16,10 +16,21 @@ app = Flask(
 )
 
 # Initialize TTS Engine
-tts_engine = TTSEngine(
-    model_path="/app/models/tr_TR-dfki-medium.onnx",
-    config_path="/app/models/tr_TR-dfki-medium.onnx.json",
-)
+# tts_engine = TTSEngine(
+#    model_path="/app/models/tr_TR-dfki-medium.onnx",
+#    config_path="/app/models/tr_TR-dfki-medium.onnx.json",
+# )
+
+model_paths = {
+    "dfki": {
+        "model": "/app/models/tr_TR-dfki-medium.onnx",
+        "config": "/app/models/tr_TR-dfki-medium.onnx.json",
+    },
+    "fahrettin": {
+        "model": "/app/models/tr_TR-fahrettin-medium.onnx",
+        "config": "/app/models/tr_TR-fahrettin-medium.onnx.json",
+    },
+}
 
 
 @app.route("/")
@@ -31,7 +42,13 @@ def index():
 def generate_speech():
     data = request.get_json()
     text = data.get("text", "").strip()
-    language = data.get("language", "tr-TR")  # 'tr-TR' or 'az-AZ'
+    language = data.get("language", "tr-TR")
+    speaker = data.get("speaker", "dfki")  # or fahrettin
+
+    tts_engine = TTSEngine(
+        model_path=model_paths[speaker]["model"],
+        config_path=model_paths[speaker]["config"],
+    )
 
     if not text:
         return {"error": "No text provided"}, 400
@@ -61,7 +78,7 @@ def health():
     return {
         "status": "healthy",
         "model": "tr_TR-dfki-medium",
-        "languages": ["tr-TR", "az-AZ"],
+        "languages": ["tr-TR"],
         "number_handling": "advanced",
         "piper_version": "1.2.0",
         "api_style": "requires_wav_file_parameter",
