@@ -1,49 +1,243 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turkish TTS</title>
+    <title>Turkish Text-to-Speech (TTS) Converter | Free Online Service</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Free Turkish Text-to-Speech converter. Convert Turkish text to natural-sounding speech with advanced number, currency, and date handling. Supports multiple speakers and languages.">
+    <meta name="keywords"
+        content="Turkish TTS, text-to-speech, Turkish speech synthesis, text to voice, Turkish language, TTS service, speech converter, Turkish voice generator">
+    <meta name="author" content="Serkan Algur">
+    <meta name="creator" content="Serkan Algur">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Turkish Text-to-Speech Converter">
+    <meta property="og:description"
+        content="Convert Turkish text to natural speech with advanced number and currency handling">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Turkish Text-to-Speech Converter">
+    <meta name="twitter:description" content="Free Turkish TTS service with intelligent number and date conversion">
+
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Turkish Text-to-Speech Converter",
+  "description": "Free Turkish Text-to-Speech service that converts text to natural-sounding speech with support for numbers, currency, dates, and more",
+  "url": "https://github.com/serkanalgur/turkish-tts",
+  "applicationCategory": "UtilityApplication",
+  "creator": {
+    "@type": "Person",
+    "name": "Serkan Algur",
+    "url": "https://github.com/serkanalgur"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Serkan Algur",
+    "url": "https://github.com/serkanalgur"
+  },
+  "sourceOrganization": {
+    "@type": "WebApplication",
+    "name": "Turkish TTS"
+  },
+  "inLanguage": "en"
+}
+    </script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Turkish Text-to-Speech</h1>
-
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 id="mainTitle">Turkish Text-to-Speech</h1>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">English</button>
+            <button onclick="setLanguage('tr')" class="lang-btn" id="btn-tr">Türkçe</button>
+            <button onclick="setLanguage('az')" class="lang-btn" id="btn-az">Azərbaycanca</button>
+        </div>
+    </div>
 
     <div class="sample-section">
-        <div class="sample-category">Turkish Examples:</div>
+        <div class="sample-category" id="sampleCategoryLabel">Turkish Examples:</div>
         <div class="sample-text"
-            onclick="setSampleText('tr-TR', 'Bugün 25.5 derece sıcaklık var ve 123.456 TL param var.')">
+            onclick="setSampleText('tr-TR', 'Bugün 25.5 derece sıcaklık var ve 123.456 TL param var.')"
+            data-en="📝 Numbers, decimals & currency" data-tr="📝 Sayılar, ondalıklar ve para birimi"
+            data-az="📝 Rəqəmlər, onluqlar və valyuta">
             📝 Numbers, decimals & currency
         </div>
         <div class="sample-text"
-            onclick="setSampleText('tr-TR', 'Ücret %15.5 artacak ve 2023-08-27 tarihinde geçerli olacak.')">
+            onclick="setSampleText('tr-TR', 'Ücret %15.5 artacak ve 2023-08-27 tarihinde geçerli olacak.')"
+            data-en="📝 Percentage & date" data-tr="📝 Yüzde ve tarih" data-az="📝 Faiz və tarix">
             📝 Percentage & date
         </div>
-        <div class="sample-text" onclick="setSampleText('tr-TR', 'Toplantı 14:30\'da başlayacak ve 2.5 saat sürecek.')">
+        <div class="sample-text" onclick="setSampleText('tr-TR', 'Toplantı 14:30\'da başlayacak ve 2.5 saat sürecek.')"
+            data-en="📝 Time & duration" data-tr="📝 Saat ve süre" data-az="📝 Vaxt və müddət">
             📝 Time & duration
         </div>
         <div class="sample-text"
-            onclick="setSampleText('tr-TR', '1/2 dilim pizza ve 3,14 sayısı hakkında konuşacağız.')">
+            onclick="setSampleText('tr-TR', '1/2 dilim pizza ve 3,14 sayısı hakkında konuşacağız.')"
+            data-en="📝 Fractions & special numbers" data-tr="📝 Kesirler ve özel sayılar"
+            data-az="📝 Kəsrlər və xüsusi rəqəmlər">
             📝 Fractions & special numbers
         </div>
     </div>
 
     <textarea id="textInput"
-        placeholder="Enter text here (supports numbers like 123, 45.6, $100, 2023-08-27, etc.)">Merhaba, bu bir test mesajıdır. Bugün 25,5 derece sıcaklık var ve 123,456 TL param var.</textarea>
+        placeholder="Enter text here (supports numbers like 123, 45.6, $100, 2023-08-27, etc.)">Merhaba, bu bir test mesajıdır. Bugün 25.5 derece sıcaklık var ve 123.456 TL param var.</textarea>
     <select id="languageSelect">
         <option value="tr-TR">Turkish (tr-TR)</option>
     </select>
     <select id="speakerSelect">
         <option value="dfki">dfki</option>
-        <option value="fahrettin">Fahrettin</option>
     </select>
-    <button onclick="generateAudio()">Generate Speech</button>
+    <button id="generateBtn" onclick="generateAudio()">Generate Speech</button>
     <div id="status" class="info">TTS service is ready - click a sample text above to try number handling</div>
+    <hr />
     <audio id="audioPlayer" controls style="width: 100%"></audio>
     <script src="script.js"></script>
+    <hr>
+    <div id="footer">Made with ❤️ by Serkan Algur</div>
+
+    <script>
+        // Multi-language translations
+        window.translations = {
+            en: {
+                title: "Text-to-Speech Converter",
+                sampleCategory: "Examples:",
+                placeholder: "Enter text here (supports numbers like 123, 45.6, $100, 2023-08-27, etc.)",
+                generateBtn: "Generate Speech",
+                status: "TTS service is ready - click a sample text above to try number handling",
+                footer: "Made with ❤️ by Serkan Algur",
+                numbers: "📝 Numbers, decimals & currency",
+                percentage: "📝 Percentage & date",
+                time: "📝 Time & duration",
+                fractions: "📝 Fractions & special numbers",
+                sampleText: "Hello, this is a test message. Today there are 25.5 degrees and I have 123.456 in currency.",
+                errorNoText: "Please enter some text",
+                generating: "Generating speech...",
+                successGenerated: "Speech generated successfully!",
+                errorPrefix: "Error: ",
+                errorBufferMismatch: "BUFFER MISMATCH: Expected wave file interface implementation",
+                errorServiceNotAvailable: "Service not available - check console",
+                errorRateLimited: "Too many requests. Please wait a moment before trying again (30 requests per minute limit).",
+                consoleServiceDetails: "Service details:",
+                consoleHealthCheckFailed: "Health check failed:",
+                consoleTTSFailed: "TTS generation failed:"
+            },
+            tr: {
+                title: "Metin-Konuşma Dönüştürücü",
+                sampleCategory: "Türkçe Örnekler:",
+                placeholder: "Metni buraya girin (123, 45.6, $100, 2023-08-27 gibi sayıları destekler)",
+                generateBtn: "Konuşmayı Oluştur",
+                status: "TTS hizmeti hazır - sayı işlemeyi denemek için yukarıdaki örnek metne tıklayın",
+                footer: "❤️ ile Serkan Algur tarafından yapılmıştır",
+                numbers: "📝 Sayılar, ondalıklar ve para birimi",
+                percentage: "📝 Yüzde ve tarih",
+                time: "📝 Saat ve süre",
+                fractions: "📝 Kesirler ve özel sayılar",
+                sampleText: "Merhaba, bu bir test mesajıdır. Bugün 25,5 derece sıcaklık var ve 123,456 TL param var.",
+                errorNoText: "Lütfen bir metin girin",
+                generating: "Konuşma oluşturuluyor...",
+                successGenerated: "Konuşma başarıyla oluşturuldu!",
+                errorPrefix: "Hata: ",
+                errorBufferMismatch: "ARABELLEK UYUŞMAZLIĞI: Dalga dosyası arayüzü uygulaması bekleniyor",
+                errorServiceNotAvailable: "Hizmet kullanılamıyor - konsolu kontrol edin",
+                errorRateLimited: "Çok fazla istek. Lütfen yeniden denemeden önce bir moment bekleyin (dakikada 30 istek sınırı).",
+                consoleServiceDetails: "Hizmet detayları:",
+                consoleHealthCheckFailed: "Sağlık kontrolü başarısız:",
+                consoleTTSFailed: "TTS oluşturma başarısız:"
+            },
+            az: {
+                title: "Mətni Sözə Çevirən",
+                sampleCategory: "Azərbaycanca Nümunələr:",
+                placeholder: "Mətni buraya daxil edin (123, 45.6, $100, 2023-08-27 kimi nömrələri dəstəkləyir)",
+                generateBtn: "Nitqi Yaradın",
+                status: "TTS xidməti hazırdır - rəqəm emalını sınamaq üçün yuxarıdakı nümunə mətninə klikləyin",
+                footer: "❤️ ilə Serkan Algur tərəfindən hazırlanmışdır",
+                numbers: "📝 Rəqəmlər, onluqlar və valyuta",
+                percentage: "📝 Faiz və tarix",
+                time: "📝 Vaxt və müddət",
+                fractions: "📝 Kəsrlər və xüsusi rəqəmlər",
+                sampleText: "Salam, bu test mesajıdır. Bu gün 25,5 dərəcə var və 123,456 mənim pulum var.",
+                errorNoText: "Lütfən bir mətn daxil edin",
+                generating: "Nitq yaradılır...",
+                successGenerated: "Nitq uğurla yaradıldı!",
+                errorPrefix: "Xəta: ",
+                errorBufferMismatch: "BUFFER UYUŞMAZLIĞI: Dalğa fayl interfeysi tətbiqi gözlənilir",
+                errorServiceNotAvailable: "Xidmət əlçatan deyil - konsolu yoxlayın",
+                errorRateLimited: "Çox sayda sorğu. Yenə cəhd etməzdən əvvəl bir az gözləyin (dəqiqədə 30 sorğu limiti).",
+                consoleServiceDetails: "Xidmət detalları:",
+                consoleHealthCheckFailed: "Sağlamlıq yoxlaması uğursuz oldu:",
+                consoleTTSFailed: "TTS yaratma uğursuz oldu:"
+            }
+        };
+
+        // Get current language from localStorage or default to Turkish
+        let currentLang = localStorage.getItem('selectedLanguage') || 'tr';
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            setLanguage(currentLang);
+        });
+
+        // Set language function
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('selectedLanguage', lang);
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+
+            // Update all text elements
+            document.getElementById('mainTitle').textContent = translations[lang].title;
+            document.getElementById('sampleCategoryLabel').textContent = translations[lang].sampleCategory;
+            document.getElementById('textInput').placeholder = translations[lang].placeholder;
+            document.getElementById('generateBtn').textContent = translations[lang].generateBtn;
+            document.getElementById('status').textContent = translations[lang].status;
+
+            // Update footer with GitHub link
+            const footerElement = document.getElementById('footer');
+            const footerText = translations[lang].footer;
+            footerElement.innerHTML = footerText.replace('Serkan Algur', '<a href="https://github.com/serkanalgur" target="_blank" rel="noopener noreferrer">Serkan Algur</a>');
+
+            // Update sample text descriptions
+            const sampleTexts = document.querySelectorAll('.sample-text');
+            sampleTexts.forEach((element, index) => {
+                const keys = ['numbers', 'percentage', 'time', 'fractions'];
+                if (index < keys.length) {
+                    element.textContent = translations[lang][keys[index]];
+                }
+            });
+
+            // Update language button styles
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.style.fontWeight = 'normal';
+                btn.style.backgroundColor = '#f0f0f0';
+                btn.style.color = '#333';  // Dark text for contrast
+            });
+
+            const activeBtnId = 'btn-' + lang;
+            const activeBtn = document.getElementById(activeBtnId);
+            if (activeBtn) {
+                activeBtn.style.fontWeight = 'bold';
+                activeBtn.style.backgroundColor = '#4CAF50';
+                activeBtn.style.color = 'white';  // White text on green background
+            }
+        }
+    </script>
 </body>
 
 </html>

@@ -1,10 +1,12 @@
 # backend/app.py
 from flask import Flask, request, Response, send_file
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import logging
 import os
 
-from tts_engine import TTSEngine
-from num2words_tr import turkish_number_to_words
+from .tts_engine import TTSEngine
+from .num2words_tr import turkish_number_to_words
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -13,6 +15,15 @@ app = Flask(
     __name__,
     static_url_path="",
     static_folder="../frontend",
+)
+
+# Initialize rate limiter
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://",
+    strategy="fixed-window",
 )
 
 # Initialize TTS Engine
@@ -39,6 +50,7 @@ def index():
 
 
 @app.route("/generate-speech", methods=["POST"])
+@limiter.limit("30 per minute")
 def generate_speech():
     data = request.get_json()
     text = data.get("text", "").strip()
@@ -86,6 +98,15 @@ def health():
     }
 
 
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    """Handle rate limit exceeded"""
+    return {
+        "error": "Rate limit exceeded. Maximum 30 requests per minute allowed."
+    }, 429
+
+
 if __name__ == "__main__":
-    logger.info("Starting TTS server on 0.0.0.0:5002")
-    app.run(host="0.0.0.0", port=5002, debug=True)
+    debug_mode = os.getenv("FLASK_ENV") == "development"
+    logger.info("Starting TTS server on 0.0.0.0:5000")
+    app.run(host="0.0.0.0", port=5000, debug=debug_mode)

@@ -1,4 +1,4 @@
-// Set sample text based on language
+﻿// Set sample text based on language
 function setSampleText(lang, text) {
     document.getElementById('textInput').value = text;
     document.getElementById('languageSelect').value = lang;
@@ -11,17 +11,21 @@ async function generateAudio() {
     const status = document.getElementById('status');
     const audioPlayer = document.getElementById('audioPlayer');
 
+    // Get current language for translations
+    const currentLang = localStorage.getItem('selectedLanguage') || 'tr';
+    const t = window.translations[currentLang];
+
     status.className = 'info';
     status.textContent = '';
 
     if (!text) {
         status.className = 'error';
-        status.textContent = "Please enter some text";
+        status.textContent = t.errorNoText;
         return;
     }
 
     status.className = '';
-    status.textContent = "Generating speech...";
+    status.textContent = t.generating;
 
     try {
         const response = await fetch('/generate-speech', {
@@ -31,8 +35,12 @@ async function generateAudio() {
         });
 
         if (!response.ok) {
+            // Handle rate limiting specifically
+            if (response.status === 429) {
+                throw new Error(t.errorRateLimited);
+            }
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || `Server error: ${response.status}`);
+            throw new Error(errorData.error || 'Server error:' + response.status);
         }
 
         const audioBlob = await response.blob();
@@ -45,11 +53,11 @@ async function generateAudio() {
 
         audioPlayer.src = audioUrl;
         status.className = 'success';
-        status.textContent = "Speech generated successfully!";
+        status.textContent = t.successGenerated;
     } catch (error) {
         status.className = 'error';
-        status.textContent = "Error: " + error.message;
-        console.error("TTS generation failed:", error);
+        status.textContent = t.errorPrefix + error.message;
+        console.error(t.consoleTTSFailed, error);
     }
 }
 
@@ -59,20 +67,23 @@ window.addEventListener('load', async () => {
         const response = await fetch('/health');
         if (response.ok) {
             const data = await response.json();
-            console.log("Service details:", data);
+            const currentLang = localStorage.getItem('selectedLanguage') || 'tr';
+            const t = window.translations[currentLang];
+            console.log(t.consoleServiceDetails, data);
 
             // Verify we're using the correct buffer implementation
             if (data.buffer_implementation !== 'wave_file_interface') {
                 document.getElementById('status').className = 'error';
-                document.getElementById('status').textContent =
-                    "BUFFER MISMATCH: Expected wave file interface implementation";
+                document.getElementById('status').textContent = t.errorBufferMismatch;
             }
         } else {
             throw new Error("Health check failed");
         }
     } catch (e) {
+        const currentLang = localStorage.getItem('selectedLanguage') || 'tr';
+        const t = window.translations[currentLang];
         document.getElementById('status').className = 'error';
-        document.getElementById('status').textContent = "Service not available - check console";
-        console.error("Health check failed:", e);
+        document.getElementById('status').textContent = t.errorServiceNotAvailable;
+        console.error(t.consoleHealthCheckFailed, e);
     }
 });

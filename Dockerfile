@@ -32,5 +32,5 @@ RUN echo "from flask import Flask, request\napp = Flask(__name__)\n\n@app.route(
 EXPOSE 5000
 
 
-# Run the application
-CMD ["python", "backend/app.py"]
+# Run the application with Gunicorn (production WSGI server)
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "--chdir", "/app", "backend.app:app"]
