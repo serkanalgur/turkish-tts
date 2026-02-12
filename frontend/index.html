@@ -61,14 +61,14 @@
 </head>
 
 <body>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <header class="topbar">
         <h1 id="mainTitle">Turkish Text-to-Speech</h1>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">English</button>
-            <button onclick="setLanguage('tr')" class="lang-btn" id="btn-tr">Türkçe</button>
-            <button onclick="setLanguage('az')" class="lang-btn" id="btn-az">Azərbaycanca</button>
+        <div class="lang-group" role="tablist" aria-label="Language selector">
+            <button onclick="setLanguage('en')" class="lang-btn" id="btn-en" aria-pressed="false">English</button>
+            <button onclick="setLanguage('tr')" class="lang-btn" id="btn-tr" aria-pressed="false">Türkçe</button>
+            <button onclick="setLanguage('az')" class="lang-btn" id="btn-az" aria-pressed="false">Azərbaycanca</button>
         </div>
-    </div>
+    </header>
 
     <div class="sample-section">
         <div class="sample-category" id="sampleCategoryLabel">Turkish Examples:</div>
@@ -97,13 +97,19 @@
 
     <textarea id="textInput"
         placeholder="Enter text here (supports numbers like 123, 45.6, $100, 2023-08-27, etc.)">Merhaba, bu bir test mesajıdır. Bugün 25.5 derece sıcaklık var ve 123.456 TL param var.</textarea>
-    <select id="languageSelect">
-        <option value="tr-TR">Turkish (tr-TR)</option>
-    </select>
-    <select id="speakerSelect">
-        <option value="dfki">dfki</option>
-    </select>
-    <button id="generateBtn" onclick="generateAudio()">Generate Speech</button>
+
+    <div class="controls">
+        <select id="languageSelect">
+            <option value="tr-TR">Turkish (tr-TR)</option>
+        </select>
+
+        <select id="speakerSelect">
+            <option value="dfki">dfki</option>
+        </select>
+
+        <button id="generateBtn" onclick="generateAudio()">Generate Speech</button>
+    </div>
+
     <div id="status" class="info">TTS service is ready - click a sample text above to try number handling</div>
     <hr />
     <audio id="audioPlayer" controls style="width: 100%"></audio>
@@ -222,19 +228,16 @@
                 }
             });
 
-            // Update language button styles
+            // Update language button styles (use classes + ARIA for accessibility)
             document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.style.fontWeight = 'normal';
-                btn.style.backgroundColor = '#f0f0f0';
-                btn.style.color = '#333';  // Dark text for contrast
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
             });
 
-            const activeBtnId = 'btn-' + lang;
-            const activeBtn = document.getElementById(activeBtnId);
+            const activeBtn = document.getElementById('btn-' + lang);
             if (activeBtn) {
-                activeBtn.style.fontWeight = 'bold';
-                activeBtn.style.backgroundColor = '#4CAF50';
-                activeBtn.style.color = 'white';  // White text on green background
+                activeBtn.classList.add('active');
+                activeBtn.setAttribute('aria-pressed', 'true');
             }
         }
     </script>
