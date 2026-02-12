@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/serkanalgur/turkish-tts/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: Documentation
+    url: https://github.com/serkanalgur/turkish-tts#readme
+    about: Check out the README and documentation
+  - name: Live Demo
+    url: https://turkish-tts.yapai.az/
+    about: Try the live demo application
