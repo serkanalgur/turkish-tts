@@ -2,7 +2,7 @@
 
 A powerful, open-source multilingual Text-to-Speech service for **Turkish (tr-TR)**, **English**, and **Azerbaijani** using [Piper TTS](https://github.com/rhasspy/piper).
 
-**🌐 Live Demo**: [https://turkish-tts.yapai.az/](https://turkish-tts.yapai.az/)
+**🌐 Live Demo**: [https://turkish-tts.shot.az/](https://turkish-tts.shot.az/)
 
 ## About
 
@@ -39,7 +39,7 @@ Turkish TTS is a modern, web-based Text-to-Speech converter that leverages the a
 
 ### For Users:
 
-1. Visit [https://turkish-tts.yapai.az/](https://turkish-tts.yapai.az/)
+1. Visit [https://turkish-tts.shot.az/](https://turkish-tts.shot.az/)
 2. Select your preferred language (English, Turkish, or Azerbaijani)
 3. Enter or paste text you want to convert to speech
 4. Click "Generate Speech"
@@ -330,7 +330,7 @@ This project is open-source and available under the MIT License.
 
 - **GitHub**: [https://github.com/serkanalgur/turkish-tts](https://github.com/serkanalgur/turkish-tts)
 - **Developer**: [Serkan Algur](https://github.com/serkanalgur/)
-- **Website**: [https://turkish-tts.yapai.az/](https://turkish-tts.yapai.az/)
+- **Website**: [https://turkish-tts.shot.az/](https://turkish-tts.shot.az/)
 
 ## Acknowledgments
 
